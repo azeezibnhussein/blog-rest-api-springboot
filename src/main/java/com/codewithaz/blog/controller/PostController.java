@@ -3,7 +3,6 @@ package com.codewithaz.blog.controller;
 import com.codewithaz.blog.dto.PostDto;
 import com.codewithaz.blog.service.PostService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,5 +36,11 @@ public class PostController {
     @PutMapping("/{id}")
     public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto, @PathVariable(name = "id") long id) {
         return new ResponseEntity<>(postService.updatePost(postDto, id), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletePostById(@PathVariable(name = "id") long id) {
+        postService.deletePostById(id);
+        return new ResponseEntity<>("Post deleted successfully.", HttpStatus.OK);
     }
 }
