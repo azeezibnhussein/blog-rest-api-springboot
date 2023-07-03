@@ -2,6 +2,7 @@ package com.codewithaz.blog.service.impl;
 
 import com.codewithaz.blog.dto.PostDto;
 import com.codewithaz.blog.entity.Post;
+import com.codewithaz.blog.exception.ResourceNotFoundException;
 import com.codewithaz.blog.repository.PostRepository;
 import com.codewithaz.blog.service.PostService;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,13 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostDto> getAllPosts() {
         List<Post> posts = postRepository.findAll();
-        return posts.stream().map(post -> mapToDto(post)).collect(Collectors.toList());git 
+        return posts.stream().map(post -> mapToDto(post)).collect(Collectors.toList());
+    }
+
+    @Override
+    public PostDto getPostById(Long id) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("post", "id", id));
+        return mapToDto(post);
     }
 
     private Post mapToEntity(PostDto postDto) {
