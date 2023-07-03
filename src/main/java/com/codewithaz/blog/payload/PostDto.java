@@ -1,4 +1,4 @@
-package com.codewithaz.blog.dto;
+package com.codewithaz.blog.payload;
 
 import lombok.Data;
 
