@@ -2,11 +2,13 @@ package com.codewithaz.blog.service.impl;
 
 import com.codewithaz.blog.entity.Comment;
 import com.codewithaz.blog.entity.Post;
+import com.codewithaz.blog.exception.BlogAPIException;
 import com.codewithaz.blog.exception.ResourceNotFoundException;
 import com.codewithaz.blog.payload.CommentDto;
 import com.codewithaz.blog.repository.CommentRepository;
 import com.codewithaz.blog.repository.PostRepository;
 import com.codewithaz.blog.service.CommentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,6 +46,21 @@ public class CommentServiceImpl implements CommentService {
         List<Comment> comments = commentRepository.findByPostId(postId);
 
         return comments.stream().map(this::mapToDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentDto getCommentById(long postId, long commentId) {
+
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new ResourceNotFoundException("Post", "Id", postId));
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new ResourceNotFoundException("Comment", "Id", commentId));
+
+        if (!comment.getPost().getId().equals(post.getId()))
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
+
+        return mapToDto(comment);
     }
 
     private CommentDto mapToDto(Comment comment) {
